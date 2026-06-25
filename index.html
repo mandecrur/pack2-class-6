@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Práctica — Clase 6 | Pack 2 | EBR Secundaria Inglés</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .cover {
+    background: #1a3a6b;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    min-height: 140px;
+  }
+  .cover-top {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 22px 40px 16px;
+    border-bottom: 3px solid #c8a84b;
+  }
+  .cover-logo {
+    width: 52px; height: 52px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 22px; font-weight: 900; color: #1a3a6b;
+    font-family: Arial, sans-serif;
+    letter-spacing: -1px;
+  }
+  .cover-title { flex: 1; }
+  .cover-title h1 {
+    font-family: Arial, sans-serif;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: #c8a84b; margin-bottom: 3px;
+  }
+  .cover-title h2 {
+    font-family: Arial, sans-serif;
+    font-size: 17px; font-weight: 700; color: #fff;
+  }
+  .cover-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 40px;
+    background: #122d57;
+    font-family: Arial, sans-serif; font-size: 12px; color: #a8c0e0;
+  }
+
+  .instructions {
+    background: #fff;
+    border-left: 4px solid #1a3a6b;
+    margin: 28px 40px 0;
+    padding: 16px 20px;
+    font-family: Arial, sans-serif;
+    font-size: 13px; color: #333;
+  }
+  .instructions strong { color: #1a3a6b; }
+
+  .progress-wrap {
+    margin: 20px 40px 0;
+    font-family: Arial, sans-serif;
+  }
+  .progress-meta {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #666; margin-bottom: 6px;
+  }
+  .progress-bar { height: 6px; background: #ddd; border-radius: 3px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; background: #1a3a6b;
+    border-radius: 3px; transition: width 0.4s ease; width: 0%;
+  }
+
+  .score-strip {
+    display: flex; gap: 12px;
+    margin: 16px 40px 0;
+    font-family: Arial, sans-serif;
+  }
+  .score-pill {
+    flex: 1; padding: 8px 14px;
+    border-radius: 4px; font-size: 12px; text-align: center;
+    border: 1px solid #ddd; background: #fff; color: #555;
+  }
+  .score-pill span { display: block; font-size: 20px; font-weight: 700; color: #1a3a6b; }
+  .score-pill.correct span { color: #1a7a3a; }
+  .score-pill.wrong span { color: #c0392b; }
+
+  .question-section { margin: 24px 40px 0; }
+  .section-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a3a6b;
+    border-bottom: 1px solid #c8a84b;
+    padding-bottom: 5px; margin-bottom: 16px;
+  }
+
+  .q-card {
+    background: #fff;
+    border: 1px solid #d0d0d0;
+    margin-bottom: 2px;
+    display: none;
+  }
+  .q-card.active { display: block; }
+
+  .q-header {
+    display: flex; align-items: flex-start; gap: 0;
+    border-bottom: 1px solid #e8e8e8;
+  }
+  .q-number {
+    background: #1a3a6b; color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 13px; font-weight: 700;
+    min-width: 42px; padding: 14px 0;
+    text-align: center; flex-shrink: 0;
+    align-self: stretch; display: flex; align-items: center; justify-content: center;
+  }
+  .q-body { padding: 16px 20px 18px; flex: 1; }
+  .q-stem {
+    font-size: 14.5px; line-height: 1.65;
+    margin-bottom: 14px; color: #111;
+  }
+  .q-stem em { font-style: italic; color: #2a4a8a; }
+  .q-stem strong { font-weight: 700; }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+
+  .option {
+    display: flex; align-items: flex-start; gap: 0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    user-select: none;
+  }
+  .option:hover:not(.locked) { background: #eef2f9; border-color: #1a3a6b; }
+
+  .opt-letter {
+    background: #f0f0f0;
+    border-right: 1px solid #ccc;
+    font-family: Arial, sans-serif;
+    font-size: 13px; font-weight: 700;
+    min-width: 38px; padding: 10px 0;
+    text-align: center; flex-shrink: 0;
+    color: #333; align-self: stretch;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s;
+  }
+  .opt-text {
+    padding: 10px 14px;
+    font-size: 13.5px; line-height: 1.55; color: #1a1a1a;
+    flex: 1;
+  }
+  .opt-text em { font-style: italic; color: #2a4a8a; }
+
+  .option.correct { background: #e6f4eb; border-color: #1a7a3a; }
+  .option.correct .opt-letter { background: #1a7a3a; color: #fff; border-color: #1a7a3a; }
+  .option.wrong { background: #fdecea; border-color: #c0392b; }
+  .option.wrong .opt-letter { background: #c0392b; color: #fff; border-color: #c0392b; }
+  .option.reveal { background: #e6f4eb; border-color: #1a7a3a; }
+  .option.reveal .opt-letter { background: #1a7a3a; color: #fff; border-color: #1a7a3a; }
+  .option.locked { cursor: default; }
+
+  .feedback {
+    display: none;
+    margin-top: 14px;
+    border-top: 2px solid #c8a84b;
+    padding-top: 12px;
+  }
+  .feedback.show { display: block; }
+  .feedback-header {
+    font-family: Arial, sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .feedback-header.ok { color: #1a7a3a; }
+  .feedback-header.fail { color: #c0392b; }
+  .feedback-body {
+    font-size: 13.5px; line-height: 1.65; color: #222;
+    background: #fffdf0; border-left: 3px solid #c8a84b;
+    padding: 10px 14px;
+  }
+
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 20px 40px 0; gap: 12px;
+    font-family: Arial, sans-serif;
+  }
+  .btn {
+    padding: 9px 22px;
+    font-family: Arial, sans-serif; font-size: 13px; font-weight: 700;
+    border: 2px solid #1a3a6b; background: transparent;
+    color: #1a3a6b; cursor: pointer; letter-spacing: 0.5px;
+    transition: background 0.15s, color 0.15s;
+    text-transform: uppercase;
+  }
+  .btn:hover { background: #1a3a6b; color: #fff; }
+  .btn.primary { background: #1a3a6b; color: #fff; }
+  .btn.primary:hover { background: #122d57; }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .btn:disabled:hover { background: transparent; color: #1a3a6b; }
+
+  .dot-nav {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    margin: 16px 40px 0;
+  }
+  .dot {
+    width: 32px; height: 32px;
+    border: 2px solid #ccc; background: #fff;
+    font-family: Arial, sans-serif; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #555;
+    transition: all 0.15s;
+  }
+  .dot:hover { border-color: #1a3a6b; color: #1a3a6b; }
+  .dot.active { border-color: #1a3a6b; background: #1a3a6b; color: #fff; }
+  .dot.answered-ok { border-color: #1a7a3a; background: #e6f4eb; color: #1a7a3a; }
+  .dot.answered-fail { border-color: #c0392b; background: #fdecea; color: #c0392b; }
+
+  .final {
+    display: none;
+    margin: 28px 40px 0;
+    background: #fff; border: 1px solid #d0d0d0;
+    padding: 36px 32px; text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  .final.show { display: block; }
+  .final-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a3a6b; margin-bottom: 6px;
+  }
+  .final-score { font-size: 56px; font-weight: 700; color: #1a3a6b; line-height: 1; margin: 10px 0 4px; }
+  .final-total { font-size: 14px; color: #666; margin-bottom: 6px; }
+  .final-pct { font-size: 28px; font-weight: 700; color: #c8a84b; margin-bottom: 16px; }
+  .final-msg { font-size: 14px; color: #333; margin-bottom: 24px; line-height: 1.6; }
+  .final-grid { display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; }
+  .final-cell { padding: 12px 20px; border: 1px solid #ddd; min-width: 90px; font-size: 12px; color: #666; }
+  .final-cell span { display: block; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
+  .final-cell.ok span { color: #1a7a3a; }
+  .final-cell.fail span { color: #c0392b; }
+
+  .page-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin: 32px 40px 0; padding: 12px 0;
+    border-top: 1px solid #ccc;
+    font-family: Arial, sans-serif; font-size: 11px; color: #999;
+  }
+
+  @media (max-width: 600px) {
+    .cover-top, .cover-bottom, .instructions, .progress-wrap,
+    .score-strip, .question-section, .nav-row, .dot-nav,
+    .final, .page-footer { margin-left: 16px; margin-right: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-logo">M</div>
+    <div class="cover-title">
+      <h1>Práctica de Evaluación Docente</h1>
+      <h2>Clase 6 — Gestión de los Aprendizajes y Procesos Auxiliares</h2>
+    </div>
+  </div>
+  <div class="cover-bottom">
+    <span>&#9632; EBR Secundaria &nbsp;|&nbsp; Inglés como Lengua Extranjera</span>
+    <span>Pack 2 &nbsp;|&nbsp; Preguntas 6–10</span>
+  </div>
+</div>
+
+<div class="instructions">
+  <strong>Instrucciones:</strong> Lee cada situación con atención y selecciona la opción correcta. Al marcar una respuesta verás la explicación correspondiente. Puedes navegar entre preguntas usando los botones o los cuadros numerados.
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-meta">
+    <span id="progLabel">Pregunta 6 de 10</span>
+    <span id="progPct">0% completado</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="score-strip">
+  <div class="score-pill"><span id="scoreTotal">0</span>Respondidas</div>
+  <div class="score-pill correct"><span id="scoreOk">0</span>Correctas</div>
+  <div class="score-pill wrong"><span id="scoreFail">0</span>Incorrectas</div>
+</div>
+
+<div class="dot-nav" id="dotNav"></div>
+
+<div class="question-section">
+  <div class="section-label">Casuísticas de práctica</div>
+
+  <!-- Q6 -->
+  <div class="q-card active" id="q6">
+    <div class="q-header">
+      <div class="q-number">6</div>
+      <div class="q-body">
+        <div class="q-stem">
+          During his explanation of <em>there is / there are</em>, Ricardo notices that one of his students has been drawing in his notebook for several minutes and is not looking at the board. Which auxiliary process of learning is failing in this student?
+        </div>
+        <div class="options" data-correct="b">
+          <div class="option" data-opt="a" onclick="pick(6,'a')">
+            <div class="opt-letter">A</div>
+            <div class="opt-text">Transfer, because the student cannot apply the knowledge to a new context.</div>
+          </div>
+          <div class="option" data-opt="b" onclick="pick(6,'b')">
+            <div class="opt-letter">B</div>
+            <div class="opt-text">Sustained attention, because the student is unable to keep his mental resources focused on the stimulus over a prolonged period.</div>
+          </div>
+          <div class="option" data-opt="c" onclick="pick(6,'c')">
+            <div class="opt-letter">C</div>
+            <div class="opt-text">Retrieval, because the student cannot recall information stored in his long-term memory.</div>
+          </div>
+        </div>
+        <div class="feedback" id="fb6">
+          <div class="feedback-header" id="fbh6"></div>
+          <div class="feedback-body">
+            La <strong>atención sostenida</strong> es la capacidad de mantener el foco en un estímulo durante un período prolongado (Posner y Petersen, 1990). El alumno que dibuja ha desviado sus recursos mentales hacia otra actividad, lo que impide que el input lingüístico del docente se procese y transforme en conocimiento. La transferencia y la recuperación son procesos que ocurren <em>después</em> de que el aprendizaje ha tenido lugar, no durante la recepción inicial del estímulo.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="q-card" id="q7">
+    <div class="q-header">
+      <div class="q-number">7</div>
+      <div class="q-body">
+        <div class="q-stem">
+          Verónica proposes the following to her students: <em>"We are going to record a podcast in English about the best places to visit in our region. It will be uploaded to the school website so other students and parents can listen to it."</em> Several students start participating enthusiastically without being asked. Which type of motivation predominates and why does MINEDU prioritise it?
+        </div>
+        <div class="options" data-correct="b">
+          <div class="option" data-opt="a" onclick="pick(7,'a')">
+            <div class="opt-letter">A</div>
+            <div class="opt-text">Extrinsic motivation, because the task has a final product that will be published and seen by others.</div>
+          </div>
+          <div class="option" data-opt="b" onclick="pick(7,'b')">
+            <div class="opt-letter">B</div>
+            <div class="opt-text">Intrinsic motivation, because the authentic challenge generates inherent satisfaction in the activity and produces greater engagement and sustained learning than external rewards.</div>
+          </div>
+          <div class="option" data-opt="c" onclick="pick(7,'c')">
+            <div class="opt-letter">C</div>
+            <div class="opt-text">Regulated amotivation, because students participate without fully understanding the purpose of the task.</div>
+          </div>
+        </div>
+        <div class="feedback" id="fb7">
+          <div class="feedback-header" id="fbh7"></div>
+          <div class="feedback-body">
+            Ryan y Deci (2000) definen la <strong>motivación intrínseca</strong> como la impulsada por la satisfacción inherente a la propia actividad. El MINEDU la prioriza porque produce mayor <em>engagement</em> y aprendizaje sostenido en comparación con los incentivos externos. Plantear retos auténticos con sentido real —como un podcast para la comunidad escolar— activa este tipo de motivación al dar un propósito comunicativo genuino a la tarea.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="q-card" id="q8">
+    <div class="q-header">
+      <div class="q-number">8</div>
+      <div class="q-body">
+        <div class="q-stem">
+          Daniel tells his students that whoever gets the highest score on the vocabulary test on Friday will receive a prize. Most students study hard all week. Which statement best describes this situation?
+        </div>
+        <div class="options" data-correct="b">
+          <div class="option" data-opt="a" onclick="pick(8,'a')">
+            <div class="opt-letter">A</div>
+            <div class="opt-text">It is an example of intrinsic motivation, because students feel genuinely interested in learning vocabulary.</div>
+          </div>
+          <div class="option" data-opt="b" onclick="pick(8,'b')">
+            <div class="opt-letter">B</div>
+            <div class="opt-text">It is an example of extrinsic motivation, and although it may generate short-term effort, it produces less sustained learning than authentic challenges aligned with MINEDU's approach.</div>
+          </div>
+          <div class="option" data-opt="c" onclick="pick(8,'c')">
+            <div class="opt-letter">C</div>
+            <div class="opt-text">It is an example of metacognitive planning, because students organise their study time in advance.</div>
+          </div>
+        </div>
+        <div class="feedback" id="fb8">
+          <div class="feedback-header" id="fbh8"></div>
+          <div class="feedback-body">
+            La <strong>motivación extrínseca</strong> (Ryan y Deci, 2000) está impulsada por recompensas o consecuencias externas —en este caso, el premio. Aunque puede generar esfuerzo a corto plazo, el MINEDU prioriza la motivación intrínseca porque produce aprendizaje más profundo y duradero. Organizar el tiempo de estudio es una estrategia de planificación, pero no convierte la situación en metacognición.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="q-card" id="q9">
+    <div class="q-header">
+      <div class="q-number">9</div>
+      <div class="q-body">
+        <div class="q-stem">
+          At the beginning of a lesson on <em>present continuous</em>, Lorena asks: <em>"Without looking at your notes, can you remember three action verbs we studied last week? Try to say them aloud."</em> What auxiliary learning process is Lorena activating?
+        </div>
+        <div class="options" data-correct="b">
+          <div class="option" data-opt="a" onclick="pick(9,'a')">
+            <div class="opt-letter">A</div>
+            <div class="opt-text">Scaffolding, because Lorena provides verbal support to help students access the new content.</div>
+          </div>
+          <div class="option" data-opt="b" onclick="pick(9,'b')">
+            <div class="opt-letter">B</div>
+            <div class="opt-text">Retrieval, because students must evoke information stored in their long-term memory without any external aid.</div>
+          </div>
+          <div class="option" data-opt="c" onclick="pick(9,'c')">
+            <div class="opt-letter">C</div>
+            <div class="opt-text">Near transfer, because students apply previously learned verbs in a new grammatical context.</div>
+          </div>
+        </div>
+        <div class="feedback" id="fb9">
+          <div class="feedback-header" id="fbh9"></div>
+          <div class="feedback-body">
+            La <strong>recuperación</strong> (<em>retrieval</em>, Tulving y Thomson, 1973) es la capacidad de evocar información almacenada en la memoria a largo plazo. Pedir a los alumnos que recuerden verbos <em>sin apuntes</em> es una práctica de retrieval activo que refuerza las trazas de memoria. No es andamiaje porque Lorena no provee soporte adicional, y no es transferencia porque no se aplica el conocimiento a un contexto nuevo: simplemente se evoca.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="q-card" id="q10">
+    <div class="q-header">
+      <div class="q-number">10</div>
+      <div class="q-body">
+        <div class="q-stem">
+          Kevin studied a list of irregular verbs silently at home the night before. The next day, during an oral storytelling game, he cannot remember the past form of <em>"break."</em> What principle best explains Kevin's difficulty?
+        </div>
+        <div class="options" data-correct="a">
+          <div class="option" data-opt="a" onclick="pick(10,'a')">
+            <div class="opt-letter">A</div>
+            <div class="opt-text">The principle of encoding specificity (Tulving & Thomson, 1973): the retrieval conditions (spontaneous oral production) do not match the encoding conditions (silent reading), which makes recall less effective.</div>
+          </div>
+          <div class="option" data-opt="b" onclick="pick(10,'b')">
+            <div class="opt-letter">B</div>
+            <div class="opt-text">The scaffolding principle, because Kevin did not receive enough support from the teacher during the encoding phase.</div>
+          </div>
+          <div class="option" data-opt="c" onclick="pick(10,'c')">
+            <div class="opt-letter">C</div>
+            <div class="opt-text">The transfer principle, because Kevin studied the verbs in isolation and cannot apply them in a real communicative context.</div>
+          </div>
+        </div>
+        <div class="feedback" id="fb10">
+          <div class="feedback-header" id="fbh10"></div>
+          <div class="feedback-body">
+            El <strong>principio de especificidad de codificación</strong> (Tulving y Thomson, 1973) establece que la recuperación es más efectiva cuando el contexto de recuperación coincide con el de codificación. Kevin estudió <em>leyendo en silencio</em> (condición de codificación) pero debe recordar en <em>producción oral espontánea</em> (condición de recuperación diferente), lo que dificulta el acceso a la información. No es un problema de andamiaje ni de transferencia propiamente dicha.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FINAL -->
+<div class="final" id="finalScreen">
+  <div class="final-title">Resultado del simulacro</div>
+  <div class="final-score" id="finalScore">0</div>
+  <div class="final-total">de 5 preguntas</div>
+  <div class="final-pct" id="finalPct">0%</div>
+  <div class="final-msg" id="finalMsg"></div>
+  <div class="final-grid">
+    <div class="final-cell ok"><span id="fOk">0</span>Correctas</div>
+    <div class="final-cell fail"><span id="fFail">0</span>Incorrectas</div>
+    <div class="final-cell"><span id="fPct">0%</span>Puntaje</div>
+  </div>
+  <button class="btn primary" onclick="restart()">&#8635; Reintentar</button>
+</div>
+
+<div class="nav-row" id="navRow">
+  <button class="btn" id="btnPrev" onclick="go(-1)" disabled>&#8592; Anterior</button>
+  <span id="navInfo" style="font-family:Arial,sans-serif;font-size:12px;color:#666;"></span>
+  <button class="btn primary" id="btnNext" onclick="go(1)">Siguiente &#8594;</button>
+</div>
+
+<div class="page-footer">
+  <span>Clase 6 — Pack 2</span>
+  <span>A-C6-P2 | EBR Secundaria Inglés</span>
+</div>
+
+<script>
+const QUESTIONS = [6,7,8,9,10];
+const TOTAL = 5;
+const CORRECT = { 6:'b', 7:'b', 8:'b', 9:'b', 10:'a' };
+
+let current = 6;
+let answered = {};
+let results  = {};
+
+function init() {
+  const dn = document.getElementById('dotNav');
+  dn.innerHTML = '';
+  QUESTIONS.forEach(n => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (n === 6 ? ' active' : '');
+    d.id = 'dot' + n;
+    d.textContent = n;
+    d.onclick = () => jumpTo(n);
+    dn.appendChild(d);
+  });
+  updateUI();
+}
+
+function pick(qNum, opt) {
+  if (answered[qNum] !== undefined) return;
+  answered[qNum] = opt;
+  const correct = CORRECT[qNum];
+  const isOk = opt === correct;
+  results[qNum] = isOk;
+
+  const card = document.getElementById('q' + qNum);
+  card.querySelectorAll('.option').forEach(o => {
+    o.classList.add('locked');
+    const v = o.getAttribute('data-opt');
+    if (v === opt && isOk)   o.classList.add('correct');
+    if (v === opt && !isOk)  o.classList.add('wrong');
+    if (v === correct && !isOk) o.classList.add('reveal');
+  });
+
+  const fb  = document.getElementById('fb'  + qNum);
+  const fbh = document.getElementById('fbh' + qNum);
+  fbh.textContent = isOk ? '✓ Respuesta correcta' : '✗ Respuesta incorrecta — Revisión';
+  fbh.className   = 'feedback-header ' + (isOk ? 'ok' : 'fail');
+  fb.classList.add('show');
+
+  const dot = document.getElementById('dot' + qNum);
+  dot.classList.remove('answered-ok','answered-fail');
+  dot.classList.add(isOk ? 'answered-ok' : 'answered-fail');
+
+  updateScores();
+  updateUI();
+}
+
+function go(dir) {
+  const idx  = QUESTIONS.indexOf(current);
+  const next = QUESTIONS[idx + dir];
+  if (next !== undefined) jumpTo(next);
+}
+
+function jumpTo(n) {
+  document.getElementById('q' + current).classList.remove('active');
+  document.getElementById('dot' + current).classList.remove('active');
+  current = n;
+  document.getElementById('q' + current).classList.add('active');
+  document.getElementById('dot' + current).classList.add('active');
+  updateUI();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateUI() {
+  const done = Object.keys(answered).length;
+  const pct  = Math.round((done / TOTAL) * 100);
+  const idx  = QUESTIONS.indexOf(current);
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = 'Pregunta ' + current + ' de 10';
+  document.getElementById('progPct').textContent   = pct + '% completado';
+  document.getElementById('btnPrev').disabled = (idx === 0);
+
+  const isLast   = idx === QUESTIONS.length - 1;
+  const btnNext  = document.getElementById('btnNext');
+  if (isLast) {
+    btnNext.textContent = 'Ver resultado ↗';
+    btnNext.onclick = showFinal;
+  } else {
+    btnNext.textContent = 'Siguiente →';
+    btnNext.onclick = () => go(1);
+  }
+
+  const unanswered = TOTAL - done;
+  document.getElementById('navInfo').textContent = unanswered > 0
+    ? unanswered + ' sin responder'
+    : '¡Todas respondidas!';
+}
+
+function updateScores() {
+  const done = Object.keys(answered).length;
+  const ok   = Object.values(results).filter(Boolean).length;
+  document.getElementById('scoreTotal').textContent = done;
+  document.getElementById('scoreOk').textContent    = ok;
+  document.getElementById('scoreFail').textContent  = done - ok;
+}
+
+function showFinal() {
+  document.querySelectorAll('.q-card').forEach(c => c.style.display = 'none');
+  document.getElementById('navRow').style.display = 'none';
+  document.getElementById('dotNav').style.display = 'none';
+
+  const ok   = Object.values(results).filter(Boolean).length;
+  const fail = TOTAL - ok;
+  const pct  = Math.round((ok / TOTAL) * 100);
+
+  const msgs = [
+    [100, '¡Perfecto! Dominio completo de los temas de este pack.'],
+    [80,  'Muy bien. Repasa los ítems marcados en rojo para consolidar.'],
+    [60,  'Avance aceptable. Revisa la teoría de los procesos que fallaron.'],
+    [0,   'Necesitas repasar la Clase 6 antes de continuar. ¡Tú puedes!']
+  ];
+  const msg = msgs.find(([min]) => pct >= min)[1];
+
+  document.getElementById('finalScore').textContent = ok;
+  document.getElementById('finalPct').textContent   = pct + '%';
+  document.getElementById('finalMsg').textContent   = msg;
+  document.getElementById('fOk').textContent   = ok;
+  document.getElementById('fFail').textContent = fail;
+  document.getElementById('fPct').textContent  = pct + '%';
+  document.getElementById('finalScreen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restart() {
+  answered = {}; results = {}; current = 6;
+  document.getElementById('finalScreen').classList.remove('show');
+  document.querySelectorAll('.q-card').forEach((c, i) => {
+    c.style.display = '';
+    c.classList.toggle('active', i === 0);
+    c.querySelectorAll('.option').forEach(o =>
+      o.classList.remove('correct','wrong','reveal','locked'));
+    const fb  = c.querySelector('.feedback');
+    const fbh = c.querySelector('.feedback-header');
+    if (fb)  fb.classList.remove('show');
+    if (fbh) fbh.className = 'feedback-header';
+  });
+  document.getElementById('navRow').style.display = '';
+  document.getElementById('dotNav').style.display = '';
+  document.getElementById('scoreTotal').textContent = '0';
+  document.getElementById('scoreOk').textContent    = '0';
+  document.getElementById('scoreFail').textContent  = '0';
+  init();
+}
+
+init();
+</script>
+</body>
+</html>
